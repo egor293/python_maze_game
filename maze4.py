@@ -34,7 +34,7 @@ def generate_maze(rows, cols):
     maze = [[WALL]*cols]*rows
     stack = [(1, 1)]
     while stack:
-        col, row = stack.pop()
+        col, row = stack[0]
         direction = random.choice(directions)
         if (col, row) == (11, 23):
             maze[11, 23] = EXIT
@@ -57,7 +57,7 @@ def generate_maze(rows, cols):
                 stack.append((col, row))
                 maze[col + 1, row] = FLOOR
         
-                # redo
+                
         
 
 
