@@ -1,5 +1,5 @@
-from threading import Thread
 from keyboard import read_key
+from threading import Thread
 import random
 import time
 import sys
@@ -9,8 +9,8 @@ width = 26
 height = 16
 PLAYER = '█'
 PROJECTILE = '*'
-base_spawn_speed = 1
 base_move_speed = 1
+base_spawn_speed = 1
 field = [[' ' for _ in range(width)] for _ in range(height)]
 
 class Player:
@@ -36,12 +36,12 @@ class Player:
         elif move == 'd':
             dx = 1
         else:
-            return  # Ignore invalid input
+            return
 
         new_pos = [(row, col + dx) for row, col in self.positions]
         for row, col in new_pos:
             if col < 0 or col >= width:
-                return  # Prevent moving out of bounds
+                return  
             if field[row][col] == PROJECTILE:
                 print("Вы были поражены снарядом! Игра окончена.")
                 sys.exit()
@@ -93,19 +93,19 @@ def user_input(player):
     while True:
         key = read_key()
         player.move_player(key)
-        time.sleep(0.1)  # Prevent excessive CPU usage
+        time.sleep(0.1) 
 
 def projectile_thread(spawner, player, game_time):
     start_time = time.time()
     while True:
         elapsed_time = time.time() - start_time
-        # Exponential increase in spawn and move speed
+
         spawn_speed = base_spawn_speed * (1.05 ** (elapsed_time / 10))
         move_speed = base_move_speed * (1.05 ** (elapsed_time / 10))
         
         spawner.projectile_spawn(spawn_speed)
         spawner.projectile_move(move_speed, player)
-        time.sleep(0.5 / move_speed)  # Adjust sleep to match speed
+        time.sleep(0.5 / move_speed) 
 
 if __name__ == "__main__":
     player = Player()
@@ -113,15 +113,13 @@ if __name__ == "__main__":
     player.place_player()
     draw_field()
 
-    # Start threads
     game_time = 0
     input_thread = Thread(target=user_input, args=(player,), daemon=True)
-    proj_thread = Thread(target=projectile_thread, args=(spawner, player, game_time), daemon=True)
+    project_thread = Thread(target=projectile_thread, args=(spawner, player, game_time), daemon=True)
 
     input_thread.start()
-    proj_thread.start()
+    project_thread.start()
 
-    # Keep main thread alive
     try:
         while True:
             time.sleep(1)
